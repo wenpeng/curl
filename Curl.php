@@ -1,6 +1,4 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-
 /**
  * PHP-Curl
  * https://github.com/wenpeng/PHP-Curl
