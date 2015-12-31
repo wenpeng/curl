@@ -1,8 +1,10 @@
-# PHP-Curl
+# 关于
 PHP-Curl轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNLOAD常用操作，支持链式写法
 
-# Requirement
+# 需求
 PHP 5.3 +
+
+# 示例
 
 #####GET:
 ```php
