@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
 /**
  * PHP-Curl
  * https://github.com/wenpeng/PHP-Curl
@@ -16,14 +18,14 @@ class Curl {
     public function __construct()
     {
         $this->retry  = 0;
-        $this->option = [
+        $this->option = array(
             'CURLOPT_TIMEOUT'           => 30,
             'CURLOPT_ENCODING'          => '',
             'CURLOPT_IPRESOLVE'         => 1,
             'CURLOPT_SSL_VERIFYPEER'    => false,
             'CURLOPT_CONNECTTIMEOUT'    => 10,
             'CURLOPT_RETURNTRANSFER'    => true,
-        ];
+        );
     }
 
     /**
@@ -64,7 +66,14 @@ class Curl {
      */
     public function upload($field, $path, $type, $name)
     {
-        return $this->post($field, curl_file_create($path, $type, $name));
+        $name = basename($name);
+        if (class_exists('CURLFile')) {
+            $this->set('CURLOPT_SAFE_UPLOAD', true);
+            $file = curl_file_create($path, $type, $name);
+        } else {
+            $file = "@{$path};type={$type};filename={$name}";
+        }
+        return $this->post($field, $file);
     }
 
     /**
@@ -75,7 +84,10 @@ class Curl {
     public function submit($url)
     {
         if (! $this->post) {
-            return ['error' => 1, 'message' => '未设置POST信息'];
+            return array(
+                'error' => 1,
+                'message' => '未设置POST信息'
+            );
         }
         return $this->set('CURLOPT_URL', $url)->exec();
     }
@@ -99,7 +111,10 @@ class Curl {
     public function save($path)
     {
         if (! $this->download) {
-            return ['error' => 1, 'message' => '未设置下载地址'];
+            return array(
+                'error' => 1,
+                'message' => '未设置下载地址'
+            );
         }
 
         $result = $this->exec();
@@ -186,11 +201,11 @@ class Curl {
         $this->option   = null;
         $this->download = null;
 
-        return [
+        return array(
             'body'  => $body,
             'info'  => $info,
             'error' => $errno
-        ];
+        );
     }
 
     /**
@@ -201,7 +216,7 @@ class Curl {
      */
     private function post_fields_build($input, $pre = null){
         if (is_array($input)) {
-            $output = [];
+            $output = array();
             foreach ($input as $key => $value) {
                 $index = is_null($pre) ? $key : "{$pre}[{$key}]";
                 if (is_array($value)) {
