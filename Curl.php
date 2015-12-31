@@ -6,15 +6,16 @@
  *
  * Author: Wen Peng
  * Email: imwwp@outlook.com
- * Time: 2015/12/29 10:25
  */
 class Curl {
     private $post;
+    private $retry;
     private $option;
     private $download;
 
     public function __construct()
     {
+        $this->retry  = 0;
         $this->option = [
             'CURLOPT_TIMEOUT'           => 30,
             'CURLOPT_ENCODING'          => '',
@@ -129,10 +130,20 @@ class Curl {
     }
 
     /**
+     * 出错自动重试
+     * @param int $times
+     */
+    public function retry($times = 0)
+    {
+        $this->retry = $times;
+    }
+
+    /**
      * 执行Curl操作
+     * @param int $retry
      * @return array
      */
-    private function exec()
+    private function exec($retry = 0)
     {
         // 初始化句柄
         $ch = curl_init();
@@ -164,8 +175,14 @@ class Curl {
         // 注销句柄
         curl_close($ch);
 
+        // 自动重试
+        if ($errno && $retry < $this->retry) {
+            $this->exec($retry + 1);
+        }
+
         // 注销配置
         $this->post     = null;
+        $this->retry    = null;
         $this->option   = null;
         $this->download = null;
 
