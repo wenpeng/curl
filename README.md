@@ -1,5 +1,5 @@
 # 关于
-PHP-Curl轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNLOAD常用操作，支持链式写法
+PHP-Curl是一个轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNLOAD常用操作，支持链式写法
 
 # 需求
 对低版本做了向下支持，但建议使用 PHP 5.3 +
