@@ -1,4 +1,6 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
 /**
  * PHP-Curl
  * https://github.com/wenpeng/PHP-Curl
@@ -11,18 +13,19 @@ class Curl {
     private $post;
     private $retry;
     private $option;
+    private $default;
     private $download;
 
     public function __construct()
     {
-        $this->retry  = 0;
-        $this->option = array(
-            'CURLOPT_TIMEOUT'           => 30,
-            'CURLOPT_ENCODING'          => '',
-            'CURLOPT_IPRESOLVE'         => 1,
-            'CURLOPT_SSL_VERIFYPEER'    => false,
-            'CURLOPT_CONNECTTIMEOUT'    => 10,
-            'CURLOPT_RETURNTRANSFER'    => true,
+        $this->retry = 0;
+        $this->default = array(
+            'CURLOPT_TIMEOUT'        => 30,
+            'CURLOPT_ENCODING'       => '',
+            'CURLOPT_IPRESOLVE'      => 1,
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_SSL_VERIFYPEER' => false,
+            'CURLOPT_CONNECTTIMEOUT' => 10,
         );
     }
 
@@ -162,7 +165,8 @@ class Curl {
         $ch = curl_init();
 
         // 配置选项
-        foreach($this->option as $key => $val) {
+        $options = array_merge($this->default, $this->option);
+        foreach($options as $key => $val) {
             if (is_string($key)) {
                 $key = constant(strtoupper($key));
             }
@@ -181,7 +185,7 @@ class Curl {
 
         // 检查错误
         $errno = curl_errno($ch);
-        if (($errno === 0) && ($info['http_code'] >= 400)) {
+        if ($errno === 0 && $info['http_code'] >= 400) {
             $errno = $info['http_code'];
         }
 
@@ -199,6 +203,7 @@ class Curl {
         $this->option   = null;
         $this->download = null;
 
+        // 返回结果
         return array(
             'body'  => $body,
             'info'  => $info,
