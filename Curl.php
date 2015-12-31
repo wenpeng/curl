@@ -1,6 +1,4 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-
 /**
  * PHP-Curl
  * https://github.com/wenpeng/PHP-Curl
@@ -183,7 +181,7 @@ class Curl {
 
         // 检查错误
         $errno = curl_errno($ch);
-        if ($errno === 0 && $info['http_code'] >= 400) {
+        if (($errno === 0) && ($info['http_code'] >= 400)) {
             $errno = $info['http_code'];
         }
 
