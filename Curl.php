@@ -46,7 +46,7 @@ class Curl {
     public function post($data, $value = '')
     {
         if (is_array($data)) {
-            foreach ($data as $key => &$value) {
+            foreach ($data as $key => $value) {
                 $this->post[$key] = $value;
             }
         } else {
