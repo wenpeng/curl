@@ -203,9 +203,10 @@ class Curl {
 
         // 返回结果
         return array(
-            'body'  => $body,
-            'info'  => $info,
-            'error' => $errno
+            'error'     => $errno ? 1 : 0,
+            'message'   => $errno,
+            'body'      => $body,
+            'info'      => $info
         );
     }
 
