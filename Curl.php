@@ -150,6 +150,7 @@ class Curl {
     public function retry($times = 0)
     {
         $this->retry = $times;
+        return $this;
     }
 
     /**
