@@ -4,15 +4,18 @@
  * https://github.com/wenpeng/PHP-Curl
  * 一个轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNLOAD常用操作，支持链式写法。
  *
- * Author: Wen Peng
- * Email: imwwp@outlook.com
+ * Author:  Wen Peng
+ * Email:   imwwp@outlook.com
+ * Version: 1.0.0
  */
+ 
 class Curl {
     private $post;
     private $retry;
     private $option;
     private $default;
     private $download;
+    private static $instance;
 
     public function __construct()
     {
@@ -25,6 +28,19 @@ class Curl {
             'CURLOPT_SSL_VERIFYPEER' => false,
             'CURLOPT_CONNECTTIMEOUT' => 10,
         );
+    }
+        
+    /**
+     * 静态实例化
+     * @param string $url
+     * @return array
+     */
+    public static init()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self;
+        }
+        return self::$instance;
     }
 
     /**
