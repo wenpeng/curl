@@ -8,6 +8,11 @@ PHP-Curl是一个轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNL
 ```php
 $curl = new Curl;
 ```
+或者
+```php
+$curl = Curl::init();
+```
+
 
 #####GET:
 ```php
