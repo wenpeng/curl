@@ -4,6 +4,11 @@ PHP-Curl是一个轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNL
 # 需求
 对低版本做了向下支持，但建议使用 PHP 5.3 +
 
+# 安装
+``` shell
+$ composer install wenpeng/php-curl
+``` 
+
 # 示例
 ```php
 $curl = new Curl;
