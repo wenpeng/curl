@@ -6,7 +6,7 @@ PHP-Curl是一个轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNL
 
 # 安装
 ``` shell
-$ composer install wenpeng/php-curl
+$ composer require wenpeng/php-curl
 ``` 
 
 # 示例
