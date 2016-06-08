@@ -32,8 +32,7 @@ class Curl {
         
     /**
      * 静态实例化
-     * @param string $url
-     * @return array
+     * @return self
      */
     public static function init()
     {
