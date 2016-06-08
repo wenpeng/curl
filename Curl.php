@@ -35,7 +35,7 @@ class Curl {
      * @param string $url
      * @return array
      */
-    public static init()
+    public static function init()
     {
         if (self::$instance === null) {
             self::$instance = new self;
