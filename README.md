@@ -43,6 +43,7 @@ $curl->download(文件地址)->save(保存路径);
 
 #####配置
 参考:http://php.net/manual/en/function.curl-setopt.php
+
 ```php
 $curl->set('CURLOPT_选项', 值)->post(多维数组)->submit(目标网址);
 ```
