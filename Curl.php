@@ -1,12 +1,12 @@
 <?php
 /**
- * PHP-Curl
+ * Author:  Wenpeng
+ * Email:   imwwp@outlook.com
+ * Version: 1.0.0
+ *
  * https://github.com/wenpeng/PHP-Curl
  * 一个轻量级的网络操作类，实现GET、POST、UPLOAD、DOWNLOAD常用操作，支持链式写法。
  *
- * Author:  Wen Peng
- * Email:   imwwp@outlook.com
- * Version: 1.0.0
  */
  
 class Curl {
@@ -15,6 +15,7 @@ class Curl {
     private $option;
     private $default;
     private $download;
+
     private static $instance;
 
     public function __construct()
@@ -161,6 +162,7 @@ class Curl {
     /**
      * 出错自动重试
      * @param int $times
+     * @return $this
      */
     public function retry($times = 0)
     {
