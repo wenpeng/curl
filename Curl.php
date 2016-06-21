@@ -66,7 +66,11 @@ class Curl {
                 $this->post[$key] = $value;
             }
         } else {
-            $this->post[$data] = $value;
+            if (empty($this->post) && is_null($value)) {
+                $this->post = $data;
+            } else {
+                $this->post[$data] = $value;
+            }
         }
         return $this;
     }
