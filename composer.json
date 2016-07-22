@@ -1,0 +1,17 @@
+{
+	"name": "wenpeng/curl",
+	"type": "library",
+	"description": "一个轻量级的PHP网络操作类，实现GET、POST、UPLOAD、DOWNLOAD常用操作，出错自动重试，支持链式写法",
+	"keywords": ["php curl", "curl upload", "curl download", "curl post", "lighty", "lightweight"],
+	"homepage": "https://github.com/wenpeng/curl",
+	"license": "MIT",
+	"authors": [
+		{"name": "Wenpeng", "email": "imwwp@outlook.com"}
+	],
+	"require": {
+		"php": ">=5.1",
+	},
+	"autoload": {
+		"files": ["Curl.php"]
+	}
+}
