@@ -16,40 +16,54 @@ $curl = Curl::init();
 ```
 
 
-#####GET:
+##### GET:
 ```php
 $curl->get(目标网址);
 ```
 
 
-#####POST:
+##### POST:
 原生Curl是不支持POST多维数组的，本类使用post_fields_build方法实现了多维数组的提交
 ```php
 $curl->post(变量名, 变量值)->post(多维数组)->submit(目标网址);
 ```
 
 
-#####UPLOAD:
+##### UPLOAD:
 ```php
-$curl->post(多维数组)->upload($_FILE字段, 本地路径, 文件类型, 原始名称)->submit(目标网址);
+$curl->post(多维数组)->file($_FILE字段, 本地路径, 文件类型, 原始名称)->submit(目标网址);
 ```
 
 
-#####DOWNLOAD:
+##### DOWNLOAD:
 ```php
-$curl->download(文件地址)->save(保存路径);
+$curl->download(文件地址, 保存路径);
 ```
 
 
-#####配置
+##### 配置
 参考:http://php.net/manual/en/function.curl-setopt.php
 
 ```php
 $curl->set('CURLOPT_选项', 值)->post(多维数组)->submit(目标网址);
 ```
 
-#####自动重试
+##### 自动重试
 ```php
 // 出错自动重试N次(默认0)
 $curl->retry(3)->post(多维数组)->submit(目标网址);
+```
+
+##### 结果
+```php
+// 任务结果状态
+if ($curl->fail()) {
+    echo $curl->message();
+}
+
+// 任务进程信息
+$info = $curl->info();
+
+// 任务结果内容
+$content = $curl->result();
 ```
