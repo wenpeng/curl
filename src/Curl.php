@@ -14,7 +14,15 @@ class Curl {
     private $post;
     private $retry = 0;
     private $custom = array();
-    private $option = array();
+    private $option = array(
+        'CURLOPT_HEADER'         => 0,
+        'CURLOPT_TIMEOUT'        => 30,
+        'CURLOPT_ENCODING'       => '',
+        'CURLOPT_IPRESOLVE'      => 1,
+        'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_SSL_VERIFYPEER' => false,
+        'CURLOPT_CONNECTTIMEOUT' => 10,
+    );
     private $download = false;
 
     private $info;
@@ -23,19 +31,6 @@ class Curl {
     private $message;
 
     private static $instance;
-
-    public function __construct()
-    {
-        $this->option = array(
-            'CURLOPT_HEADER'         => 0,
-            'CURLOPT_TIMEOUT'        => 30,
-            'CURLOPT_ENCODING'       => '',
-            'CURLOPT_IPRESOLVE'      => 1,
-            'CURLOPT_RETURNTRANSFER' => true,
-            'CURLOPT_SSL_VERIFYPEER' => false,
-            'CURLOPT_CONNECTTIMEOUT' => 10,
-        );
-    }
         
     /**
      * 静态实例化
@@ -90,16 +85,6 @@ class Curl {
     }
 
     /**
-     * 提交GET请求
-     * @param string $url
-     * @return self
-     */
-    public function get($url)
-    {
-        return $this->set('CURLOPT_URL', $url)->execute();
-    }
-
-    /**
      * 设置POST信息
      * @param array|string  $data
      * @param null|string   $value
@@ -142,13 +127,21 @@ class Curl {
     }
 
     /**
+     * 提交GET请求
+     * @param string $url
+     */
+    public function get($url)
+    {
+        $this->set('CURLOPT_URL', $url)->execute();
+    }
+
+    /**
      * 提交POST请求
      * @param string $url
-     * @return self
      */
     public function submit($url)
     {
-        return $this->set('CURLOPT_URL', $url)->execute();
+        $this->set('CURLOPT_URL', $url)->execute();
     }
 
     /**
@@ -247,7 +240,7 @@ class Curl {
         }
 
         // 注销配置
-        $this->post     = [];
+        $this->post     = array();
         $this->retry    = 0;
         $this->download = false;
     }
