@@ -65,5 +65,5 @@ if ($curl->fail()) {
 $info = $curl->info();
 
 // 任务结果内容
-$content = $curl->result();
+$content = $curl->data();
 ```
