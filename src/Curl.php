@@ -23,17 +23,16 @@ class Curl {
         'CURLOPT_SSL_VERIFYPEER' => false,
         'CURLOPT_CONNECTTIMEOUT' => 10,
     );
-    private $download = false;
 
     private $info;
     private $data;
-    private $fail;
+    private $error;
     private $message;
 
     private static $instance;
         
     /**
-     * 静态实例化
+     * Instance
      * @return self
      */
     public static function init()
@@ -45,7 +44,7 @@ class Curl {
     }
 
     /**
-     * 任务进程信息
+     * Task info
      *
      * @return array
      */
@@ -55,7 +54,7 @@ class Curl {
     }
 
     /**
-     * 任务结果内容
+     * Result Data
      *
      * @return string
      */
@@ -65,17 +64,17 @@ class Curl {
     }
 
     /**
-     * 任务进程状态
+     * Error status
      *
      * @return boolean
      */
-    public function fail()
+    public function error()
     {
-        return $this->fail;
+        return $this->error;
     }
 
     /**
-     * 任务进程消息
+     * Error message
      *
      * @return string
      */
@@ -85,7 +84,7 @@ class Curl {
     }
 
     /**
-     * 设置POST信息
+     * Set POST data
      * @param array|string  $data
      * @param null|string   $value
      * @return self
@@ -107,7 +106,7 @@ class Curl {
     }
 
     /**
-     * 设置文件上传
+     * File upload
      * @param string $field
      * @param string $path
      * @param string $type
@@ -127,46 +126,42 @@ class Curl {
     }
 
     /**
-     * 提交GET请求
-     * @param string $url
-     */
-    public function get($url)
-    {
-        $this->set('CURLOPT_URL', $url)->execute();
-    }
-
-    /**
-     * 提交POST请求
-     * @param string $url
-     */
-    public function submit($url)
-    {
-        $this->set('CURLOPT_URL', $url)->execute();
-    }
-
-    /**
-     * 设置文件下载
-     * @param string $url
+     * Save file
      * @param string $path
+     * @return self
      */
-    public function download($url, $path)
+    public function save($path)
     {
-        $this->download = true;
-        $this->set('CURLOPT_URL', $url)->execute();
-        if (! $this->fail) {
+        if (! $this->error) {
             $fp = @fopen($path, 'w');
             if ($fp === false) {
-                $this->fail = true;
-                $this->message = $path . '不可写';
+                $this->error = true;
+                $this->message = "The path {$path} is not writable.";
             } else {
                 fwrite($fp, $this->data);
                 fclose($fp);
             }
         }
+        return $this;
     }
 
     /**
-     * 配置Curl操作
+     * Request URL
+     * @param string $url
+     * @return self
+     */
+    public function url($url)
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            return $this->set('CURLOPT_URL', $url)->process();
+        } else {
+            $this->error = true;
+            $this->message = 'Target URL is required.';
+        }
+    }
+
+    /**
+     * Set option
      * @param array|string  $item
      * @param null|string   $value
      * @return self
@@ -184,7 +179,7 @@ class Curl {
     }
 
     /**
-     * 出错自动重试
+     * Set retry times
      * @param int $times
      * @return self
      */
@@ -195,15 +190,14 @@ class Curl {
     }
 
     /**
-     * 执行Curl操作
+     * Task process
      * @param int $retry
+     * @return self
      */
-    private function execute($retry = 0)
+    private function process($retry = 0)
     {
-        // 初始化句柄
         $ch = curl_init();
 
-        // 配置选项
         $option = array_merge($this->option, $this->custom);
         foreach($option as $key => $val) {
             if (is_string($key)) {
@@ -212,52 +206,41 @@ class Curl {
             curl_setopt($ch, $key, $val);
         }
 
-        // POST选项
         if ($this->post) {
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->post_array($this->post));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->build_array($this->post));
         }
 
-        // 运行句柄
         $this->data = (string) curl_exec($ch);
         $this->info = curl_getinfo($ch);
+        $this->error = curl_errno($ch) > 0;
+        $this->message = $this->error ? curl_error($ch) : '';
 
-        // 检查错误
-        if (curl_errno($ch)) {
-            $this->fail = true;
-            $this->message = curl_error($ch);
-        } else {
-            $this->fail = false;
-            $this->message = '';
-        }
-
-        // 注销句柄
         curl_close($ch);
 
-        // 自动重试
-        if ($this->fail && $retry < $this->retry) {
-            $this->execute($retry + 1);
+        if ($this->error && $retry < $this->retry) {
+            $this->process($retry + 1);
         }
 
-        // 注销配置
         $this->post     = array();
         $this->retry    = 0;
-        $this->download = false;
+
+        return $this;
     }
 
     /**
-     * 一维化POST信息
+     * Build array
      * @param array  $input
      * @param string $pre
      * @return array
      */
-    private function post_array($input, $pre = null){
+    private function build_array($input, $pre = null){
         if (is_array($input)) {
             $output = array();
             foreach ($input as $key => $value) {
                 $index = is_null($pre) ? $key : "{$pre}[{$key}]";
                 if (is_array($value)) {
-                    $output = array_merge($output, $this->post_array($value, $index));
+                    $output = array_merge($output, $this->build_array($value, $index));
                 } else {
                     $output[$index] = $value;
                 }
